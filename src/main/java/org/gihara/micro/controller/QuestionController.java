@@ -3,6 +3,7 @@ package org.gihara.micro.controller;
 import org.gihara.micro.model.Question;
 import org.gihara.micro.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,42 +17,37 @@ public class QuestionController {
 
     // Get all questions
     @GetMapping("allQuestions")
-    public List<Question> getAllQuestions() {
-        // Returning the list of questions directly
+    public ResponseEntity<List<Question>> getAllQuestions() {
         return questionService.getAllQuestions();
     }
     // Get questions by category
     @GetMapping("category/{category}")
-    public List<Question> getQuestionsByCategory(@PathVariable String category) {
-        // Returning the list of questions by category directly
+    public ResponseEntity<List<Question>> getQuestionsByCategory(@PathVariable String
+                                                                         category) {
         return questionService.getQuestionsByCategory(category);
     }
     // Add a new question
     @PostMapping("add")
-    public String addQuestion(@RequestBody Question question) {
-        // Returning the success or failure message directly
+    public ResponseEntity<String> addQuestion(@RequestBody Question question) {
         return questionService.addQuestion(question);
     }
-
-    // Update a question by ID
+    // Update a question by ID using PUT
     @PutMapping("update/{id}")
-    public String updateQuestion(@PathVariable Integer id, @RequestBody Question question)
-    {
-        // Directly returning the update message (success or failure)
+    public ResponseEntity<String> updateQuestion(@PathVariable Integer id, @RequestBody
+    Question question) {
         return questionService.updateQuestion(id, question);
     }
-    // Delete a question by name
+    // Delete a question by name using DELETE
     @DeleteMapping("delete/name/{name}")
-    public String deleteQuestionByName(@PathVariable String name) {
-        // Returning the deletion result (success or failure)
+    public ResponseEntity<String> deleteQuestionByName(@PathVariable String name) {
         return questionService.deleteQuestionByName(name);
     }
-    // Delete a question by ID
+    // Delete a question by ID using DELETE
     @DeleteMapping("delete/{id}")
-    public String deleteQuestionById(@PathVariable Integer id) {
-        // Returning the deletion result (success or failure)
+    public ResponseEntity<String> deleteQuestionById(@PathVariable Integer id) {
         return questionService.deleteQuestionById(id);
     }
+
 
 }
 
