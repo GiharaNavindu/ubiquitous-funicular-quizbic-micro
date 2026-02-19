@@ -32,5 +32,26 @@ public class QuestionController {
         // Returning the success or failure message directly
         return questionService.addQuestion(question);
     }
+
+    // Update a question by ID
+    @PutMapping("update/{id}")
+    public String updateQuestion(@PathVariable Integer id, @RequestBody Question question)
+    {
+        // Directly returning the update message (success or failure)
+        return questionService.updateQuestion(id, question);
+    }
+    // Delete a question by name
+    @DeleteMapping("delete/name/{name}")
+    public String deleteQuestionByName(@PathVariable String name) {
+        // Returning the deletion result (success or failure)
+        return questionService.deleteQuestionByName(name);
+    }
+    // Delete a question by ID
+    @DeleteMapping("delete/{id}")
+    public String deleteQuestionById(@PathVariable Integer id) {
+        // Returning the deletion result (success or failure)
+        return questionService.deleteQuestionById(id);
+    }
+
 }
 

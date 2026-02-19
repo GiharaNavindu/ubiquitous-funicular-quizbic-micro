@@ -10,8 +10,12 @@ import java.util.List;
 @Repository
 public interface QuestionRepo extends JpaRepository<Question, Integer> {
 
-    List<Question> findByCategory(String category);
+//    List<Question> findByCategory(String category);
+//
+//    @Query(value = "SELECT q.id FROM question q Where q.category=:category ORDER BY RANDOM() LIMIT :numQ", nativeQuery = true)
+//    List<Integer> findRandomQuestionsByCategory(String category, int numQ);
 
-    @Query(value = "SELECT q.id FROM question q Where q.category=:category ORDER BY RANDOM() LIMIT :numQ", nativeQuery = true)
-    List<Integer> findRandomQuestionsByCategory(String category, int numQ);
+    public List<Question> findByCategory(String category);
+
+    public List<Question> findByQuestionTitle(String questionTitle);
 }
