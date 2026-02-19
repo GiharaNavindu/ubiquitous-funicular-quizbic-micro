@@ -5,6 +5,7 @@ import org.gihara.micro.Repository.QuizRepo;
 import org.gihara.micro.model.Question;
 import org.gihara.micro.model.QuestionWrapper;
 import org.gihara.micro.model.Quiz;
+import org.gihara.micro.model.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +30,7 @@ public class QuizService {
 
             // Check if enough questions are retrieved
             if (questions.isEmpty()) {
-                return new ResponseEntity<>("Not enough questions available for the given
-                        category", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Not enough questions available for the given category", HttpStatus.BAD_REQUEST);
             }
             // Create a new Quiz object
             Quiz quiz = new Quiz();
@@ -72,4 +72,19 @@ public class QuizService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found with id: " + id);
         }
     }
+
+    public ResponseEntity<Integer> calculateResult(Integer id, List<Response> responses) {
+        Quiz quiz = quizRepository.findById(id).get();
+        List<Question> questions = quiz.getQuestions();
+        int right = 0;
+        int i = 0;
+        for (Response response : responses) {
+            if (response.getResponse().equals(questions.get(i).getRightAnswer())) {
+                right++;
+            }
+            i++;
+        }
+        return new ResponseEntity<>(right, HttpStatus.OK);
+    }
+
 }

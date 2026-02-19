@@ -1,6 +1,7 @@
 package org.gihara.micro.controller;
 
 import org.gihara.micro.model.QuestionWrapper;
+import org.gihara.micro.model.Response;
 import org.gihara.micro.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,13 @@ public class QuizController {
         List<QuestionWrapper> questionsForUser = quizService.getQuizQuestions(id);
         // Return the response with the list of QuestionWrapper DTOs and HTTP status 200 (OK)
         return new ResponseEntity<>(questionsForUser, HttpStatus.OK);
+    }
+
+    // Endpoint to submit quiz answers and calculate the result
+    @PostMapping("submit/{id}")
+    public ResponseEntity<Integer> submitQuiz(@PathVariable Integer id, @RequestBody
+    List<Response> response) {
+        return quizService.calculateResult(id, response);
     }
 }
 
