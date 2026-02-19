@@ -22,8 +22,7 @@ public class QuizService {
                     questionRepository.findRandomQuestionsByCategory(category, numQ);
 
             if (questions.isEmpty()) {
-                return new ResponseEntity<>("Not enough questions available for the given
-                        category", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Not enough questions available for the given category", HttpStatus.BAD_REQUEST);
             }
             Quiz quiz = new Quiz();
             quiz.setTitle(title);
