@@ -3,12 +3,16 @@ package org.gihara.micro.service;
 import org.gihara.micro.Repository.QuestionRepo;
 import org.gihara.micro.Repository.QuizRepo;
 import org.gihara.micro.model.Question;
+import org.gihara.micro.model.QuestionWrapper;
 import org.gihara.micro.model.Quiz;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class QuizService {
@@ -16,24 +20,56 @@ public class QuizService {
     QuizRepo quizRepository;
     @Autowired
     QuestionRepo questionRepository;
+    // Create a new quiz using the specified category, number of questions, and title
     public ResponseEntity<String> createQuiz(String category, int numQ, String title) {
         try {
+            // Fetch random questions by category
             List<Question> questions =
                     questionRepository.findRandomQuestionsByCategory(category, numQ);
 
+            // Check if enough questions are retrieved
             if (questions.isEmpty()) {
-                return new ResponseEntity<>("Not enough questions available for the given category", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Not enough questions available for the given
+                        category", HttpStatus.BAD_REQUEST);
             }
+            // Create a new Quiz object
             Quiz quiz = new Quiz();
             quiz.setTitle(title);
             quiz.setQuestions(questions);
+            // Save the quiz
             quizRepository.save(quiz);
-            return new ResponseEntity<>("Quiz created successfully with title: " + title,
-                    HttpStatus.CREATED);
+            return new ResponseEntity<>("Quiz created successfully with title: " + title, HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Error occurred while creating the quiz",
                     HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    // Method to get the questions by quiz ID
+    public List<QuestionWrapper> getQuizQuestions(Integer id) {
+        // Fetch the quiz from the database
+        Optional<Quiz> quiz = quizRepository.findById(id);
+        // Check if the quiz is present
+        if (quiz.isPresent()) {
+            // Get the questions from the quiz object
+            List<Question> questionsFromDB = quiz.get().getQuestions();
+            List<QuestionWrapper> questionsForUser = new ArrayList<>();
+            // Loop through each question and convert it to QuestionWrapper
+            for (Question q : questionsFromDB) {
+                QuestionWrapper qw = new QuestionWrapper(
+                        q.getId(),
+                        q.getQuestionTitle(),
+                        q.getOption1(),
+                        q.getOption2(),
+                        q.getOption3(),
+                        q.getOption4()
+                );
+                questionsForUser.add(qw); // Add each mapped question to the list
+            }
+            return questionsForUser;
+        } else {
+            // Handle case when the quiz is not found
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found with id: " + id);
         }
     }
 }
